@@ -1,0 +1,318 @@
+SELECT ID_EMPLEADO, NOMBRE
+    FROM EMPLEADOS
+    order by  Nombre; 
+    
+ /**LISTA DE NOMBRES DE MIS EMPLEADOS, EN ORDEN ALFABÉTICO**/   
+ 
+ /** CRITERIO DE CLASIFICACIÓN ---> DATO NOMBRE
+         VARIOS CRITERIOS DE CLASIFICACIÓN
+               2º, 3º--**/
+SELECT ID_EMPLEADO, NOMBRE, SALARIO
+    FROM EMPLEADOS
+    order by salario DESC, NOMBRE;        
+       
+      
+  /*** LISTA DE NOMBRES DE LOS EMPLEADOS 
+       DEL DEPARTAMENTO DE CLAVE 3**/
+SELECT NOMBRE AS NOMBRE_EMPLEADO
+	FROM EMPLEADOS 
+	WHERE dEPARTAMENTO= 3;
+         
+    /****NOMBRES Y SALARIOS DE LOS EMPLEADOS
+         QUE PERTENEZCAN A LOS DEPARTAMENTOS DE CLAVE
+         2 Y 3 Y 4****/
+SELECT NOMBRE, SALARIO
+	FROM EMPLEADOS 
+	WHERE DEPARTAMENTO= 3 
+    OR DEPARTAMENTO=4 
+    OR DEPARTAMENTO=2;
+    
+/*OPERADOR IN */
+/*COLUMNA IN (LISTA DE VALORES)*/
+SELECT NOMBRE, SALARIO
+	FROM EMPLEADOS 
+	WHERE DEPARTAMENTO IN(3,4,2);
+    
+       /**NOMBRE DE LOS EMPLEADOS QUE NO PERTENEZCAN
+          A LOS DEPARTAMENTOS UNO Y DOS**/
+SELECT NOMBRE
+	FROM EMPLEADOS 
+	WHERE dEPARTAMENTO!=2 
+    AND DEPARTAMENTO!=1;
+/*USANDO NOT IN*/
+SELECT NOMBRE, SALARIO
+	FROM EMPLEADOS 
+    WHERE DEPARTAMENTO NOT IN (1,2);
+
+   /**NOMBRE Y SALARIO DE LOS EMPLEADOS QUE NO PERTENEZCAN
+          A LOS DEPARTAMENTOS UNO Y DOS
+          Y CUYO SALARIO SEA MAYOR QUE 2000**/
+SELECT NOMBRE
+	FROM EMPLEADOS 
+	WHERE (dEPARTAMENTO!=2 AND DEPARTAMENTO!=1)
+    AND SALARIO>2000;
+          
+SELECT NOMBRE, SALARIO
+	FROM EMPLEADOS 
+	WHERE dEPARTAMENTO NOT IN (2,1)
+    AND SALARIO>2000;
+   
+  /**NOMBRE Y SALARIO DE LOS EMPLEADOS QUE NO PERTENEZCAN
+          A LOS DEPARTAMENTOS UNO Y DOS
+          O SU SALARIO SEA MAYOR QUE 2000**/
+          
+SELECT NOMBRE, SALARIO
+	FROM EMPLEADOS 
+	WHERE dEPARTAMENTO NOT IN (2,1)
+    OR SALARIO>2000;
+                
+  /*** DAME LOS NOMBRES DE LOS EMPLEADOS
+       QUE SU SALARIO SEA MAYOR QUE 1000 Y MENOR QUE
+       2000**/
+       
+SELECT NOMBRE, SALARIO
+	FROM EMPLEADOS 
+	WHERE SALARIO>=1000 
+    AND SALARIO<=2000;
+    
+	   /*** operador between*/
+
+SELECT NOMBRE, SALARIO
+	FROM EMPLEADOS 
+	WHERE SALARIO 
+    BETWEEN 1000 
+    AND 2000;
+  /**INTERVALO ENTRE [1000,2000] COGIENDO TAMBIEN EL 1000 Y EL 2000
+      SI EL INTERVALO FUERA (1000,2000) YA NO NOS VALDRIA BETWEEN**/
+      
+   /*** NOMBRES DE EMPLEADOS CUYO SALARIO
+        NO ESTÁ COMPRENDIDO ENTRE 1000 Y 1500**/
+        
+SELECT NOMBRE, SALARIO
+	FROM EMPLEADOS 
+	WHERE SALARIO 
+    NOT BETWEEN 1000 
+    AND 1500;
+      
+    /*** EXCLUIR SALARIOS DENTRO DE (1000,1500)**/
+    
+SELECT NOMBRE, SALARIO
+	FROM EMPLEADOS 
+	WHERE SALARIO<1000 
+    OR SALARIO>1500;
+    
+    /*** DAME NOMBRE Y APELLIDOS , Y SALARIO
+         DE LOS EMPLEADOS QUE SE LLAMEN FERNANDO**/
+         
+SELECT NOMBRE, SALARIO,ID_EMPLEADO
+	FROM EMPLEADOS
+    WHERE NOMBRE= "FERNANDO";/*ESTO NO FUNCIONARA EN ESTE CASO*/
+         
+/**** LIKE PATRÓN DE BÚSQUEDA EN UNA CADENA**/
+/*** LOCALIZAR LAS TUPLAS QUE CONTENGAN LA CADENA FERNANDO 
+DENTRO DE SU COLUMNA NOMBRE**/
+         
+SELECT NOMBRE, SALARIO, ID_EMPLEADO
+	FROM EMPLEADOS
+    WHERE NOMBRE LIKE '%FERNANDO%';
+          
+/*** QUE EMPIECE POR  LA CADENA FERNANDO Y SIGA CUALQUIER CADENA**/ 
+          
+          
+  /******* funciones de agregado, son rutinas...
+         RETORNAN UN DATO, NUNCA UNA LISTA DE DATOS***/
+         
+    /*** COUNT(*)  CUENTA LAS TUPLAS SELECCIONADAS
+         COUNT(COLUMNA)  CUENTA LAS TUPLAS SELECCIONADAS
+                         QUE TENGA VALOR EL LA COLUMNA
+         COUNT(DISTINCT COLUMNA)
+                          CUENTA LAS TUPLAS SELECCIONADAS
+                          QUE TENGA VALOR EN LA COLUMNA PERO VALOR DISTINTO
+    ****************************************/
+    
+    
+    /*** CUÁNTOS EMPLEADOS TENGO EN LA EMPRESA?**/
+    
+   SELECT COUNT(*) AS CANTIDAD_EMPLEADOS
+		FROM EMPLEADOS;
+    
+    /*** CUÁNTOS DEPARTAMENTOS TENGO EN LA EMPRESA?**/
+    
+SELECT COUNT(*) AS CANTIDAD_DEPARTAMENTOS
+    FROM DEPARTAMENTOS;
+    
+    /*DE OTRA FROMA SUPONEMOS QUE NO PODEMOS ACCEDER A TABLA DEPARTAMENTOS*/
+    
+SELECT COUNT(DISTINCT DEPARTAMENTO) AS CANTIDAD_DEPARTAMENTOS
+	FROM EMPLEADOS;
+    
+     /*** CUANTOS EMPLEADOS ESTÁN ASIGNADOS AL DEPARTAMENTO 
+          DE CLAVE 3**/
+SELECT COUNT(*) AS CANTIDAD_EMPLEADOS_DEPARTAMENTO_3
+		FROM EMPLEADOS
+        WHERE DEPARTAMENTO=3;
+         
+        /****** CUANTOS EMPLEADOS TIENEN SUPERVISOR**
+VETE A TABLA EMPLEADOS Y SELECIONA LAS TUPLAS CUYO COLUMNA SUPERVISOR TIENE VALOR
+        */
+        
+SELECT COUNT(*) AS CANTIDAD_EMPLEADOS_TIENEN_SUPERVISOR
+		FROM EMPLEADOS
+        WHERE SUPERVISOR=NOT NULL;/*ESTO NO FUNCIONA ASI PORQUE NO TIENE VALOR*/
+        
+SELECT COUNT(SUPERVISOR) AS CANTIDAD_EMPLEADOS_TIENEN_SUPERVISOR
+		FROM EMPLEADOS; 
+        
+SELECT COUNT(*) AS CANTIDAD_EMPLEADOS_TIENEN_SUPERVISOR
+		FROM EMPLEADOS
+        WHERE SUPERVISOR; 
+        
+       /*** IS NOT NULL  , SI TIENE VALOR**/   
+	/*EL IS NULL Y EL IS NOT NUL SOLO SE USA CON COLUMNAS OPTATIBAS*/
+        
+SELECT COUNT(*) AS CANTIDAD_EMPLEADOS_TIENEN_SUPERVISOR
+		FROM EMPLEADOS
+        WHERE SUPERVISOR 
+        IS NOT NULL;
+         
+         /** CUANTOS EMPLEADOS NO TIENEN SUPERVISOR,
+             CUANTOS  EMPLEADOS NO ESTÁN SUPERVISADOS**/
+
+SELECT COUNT(*) AS CANTIDAD_EMPLEADOS_TIENEN_SUPERVISOR
+		FROM EMPLEADOS
+        WHERE SUPERVISOR IS NULL;
+         
+         /**** IS NULL--- NO TIENEN VALOR**/
+         
+        /***  CUANTOS EMPLEADOS ESTÁN SUPERVISADOS POR EL EMPLEADO
+              DE CLAVE 5**/
+              
+SELECT COUNT(*) AS CANTIDAD_EMPLEADOS_TIENEN_SUPERVISOR
+		FROM EMPLEADOS
+        WHERE SUPERVISOR=5; 
+                  
+                  
+          /*******  CUÁNTOS EMPLEADOS SON SUPERVISORES***/
+          
+SELECT COUNT(DISTINCT SUPERVISOR) AS NUMERO_SUPERVISORES
+	FROM EMPLEADOS;  
+    
+	/****  EN CUANTOS PROYECTOS ESTÁ TRABAJANDO EL EMPLEADO DE CLAVE 5**/
+          
+          
+             
+         /** EN CUANTOS PROYECTOS ESTÁN TRABAJANDO
+             LOS EMPLEADOS DE CLAVES 5,3, Y 1 ?
+             ***/
+             
+             
+             
+                
+          /** CUANTOS SALARIOS HAY EN LA EMPRESA**/
+          
+          
+         
+              
+              
+          /**** DIME EL SALARIO MEDIO DE LA EMPRESA*/
+          
+          /*** AVG(COLUMNA)  MEDIA ARITMÉTICA DE LOS VALORES DE UNA COLUMNA
+                ------> DOUBLE**/
+                
+                
+              
+                    
+             /*** CÚAL ES EL VALOR DEL SALARIO MÁS ALTO
+                  EN LA EMPRESA?***/
+                  
+                /*** MAX(COLUMNA) ---- VALOR MAYOR**/  
+                
+             
+                 
+             /** DIME :
+                CANTIDAD DE EMPLEADOS, SALARIO MAYOR, SALARIO MENOR
+                  SALARIO MEDIO DE LA EMPRESA**/
+                  
+            
+                 
+           /** SALARIO MEDIO DE LOS SUPERVISADOS*/  
+                
+           /**** MAYOR SALARIO DE LOS EMPLEADOS DEL DEPARTAMENTO
+                DE CLAVE 3**/
+                
+              
+                
+            /*** CUANTOS EMPLEADOS TIENEN UN SALARIO
+                  MAYOR QUE EL SALARIO MEDIO DE  LA EMPRESA**/
+       /*     SELECT   COUNT(*)
+                FROM EMPLEADOS
+                WHERE SALARIO>(
+                               SELECT   AVG(SALARIO) 
+                               FROM EMPLEADOS  
+                              )    */        
+            
+            /*** NOMBRES Y DEPARTAMENTO
+                 DE LOS EMPLEADOS
+                 QUE TIENEN UN SALARIO
+                 MAYOR QUE EL SALARIO MEDIO DE  LA EMPRESA***/
+                 
+   /**   SELECT   NOMBRE, DEPARTAMENTO
+                FROM EMPLEADOS
+                WHERE SALARIO>(
+                               SELECT   AVG(SALARIO) 
+                               FROM EMPLEADOS  
+                              ) ;    **/ 
+                              
+                              
+     /***** CRITERIO DE CLASIFICACIÓN**
+             POR DEFECTO  ESTÁN ORDENADOS POR CLAVE PRIMARIA
+             UN CRITERIO DE CLASIFICACIÓN DISTINTO
+                ----> ORDER BY COL1
+             PUEDO TENER VARIOS CRITERIOS DE CLASIFICACIÓN
+             ----> SON ANIDADOS ***/
+             
+       /**LISTA DE NOMBRES Y SALARIOS
+          DE LOS EMPLEADOS
+          DE LOS DEPARTAMENTOS 3, 4 Y 2
+          QUE ESTÁN SUPERVISADOS
+          ORDENADOS DE MAYOR A MENOR SALARIO
+          Y EN ORDEN ALFABÉTICO
+       **/
+       
+       
+       
+        
+       
+       
+           
+           
+    /**** DAME LA FECHA DE NACIMIENTO
+          DEL EMPLEADO MÁS JOVEN**/
+          
+     
+        
+         
+         
+    /**** NOMBRES DE LOS EMPLEADOS
+         ORDENADOS POR SU EDAD**/
+         
+         
+        
+            
+     /*** EJEMPLO DE EXPRESIÓN O DATO CALCULADO**/
+     
+     /** DAME LOS DIAS QUE SE LLEVA TRABAJANDO
+         EN CADA ASIGNACIÓN DE TRABAJO**/
+         
+     
+                   
+            
+     /** para el proyecto de clave 1,
+         obtener
+         clave de cada empleado trabajando en él
+         y cantidad de días que lleva trabajando**/
+         
+     
+         
+         
+             
