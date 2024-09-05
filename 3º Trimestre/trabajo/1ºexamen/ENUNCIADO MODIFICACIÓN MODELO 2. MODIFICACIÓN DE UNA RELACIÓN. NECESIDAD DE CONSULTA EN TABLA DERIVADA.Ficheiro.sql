@@ -1,0 +1,169 @@
+/*****
+ENUNCIADO MODIFICACIÓN DEL MODELO 2. 
+**************/
+
+/****   EJERCICIO 1
+   A PARTIR DE AHORA
+   UN PROYECTO PODRÁ TENER MÁS DE UN TUTOR
+   DE PROYECTO. POR SUPUESTO,  NO PERDER LA INFORMACIÓN ACTUAL
+   /**********
+   /************* EJERCICIO 2 
+   ADEMÁS SE NOMBRA UN SEGUNDO TUTOR A CADA PROYECTO
+   QUE ES EL SUPERVISOR CON MÁS CANTIDAD DE PROYECTOS
+   TRABAJANDO
+   
+   *************/
+   /** LA RELACIÓN PROYECTO TIENE  UN EMPLEADO QUE ES TUTOR
+       HA CAMBIADO:
+       PROYECTO PARTICIPABA (1,1)
+       Y AHORA PROYECTO PARTICIPA (1,N), POR ESO LA RELACIÓN PASA A SER
+       DE TIPO  (N:M)------>
+       NECESITAMOS UNA NUEVA TABLA PARA REGISTRARLA
+       ***/
+    DROP TABLE IF EXISTS PROYECTOS_TUTORES;    
+    CREATE TABLE IF NOT EXISTS PROYECTOS_TUTORES
+    (
+        PROYECTO INTEGER UNSIGNED NOT NULL,
+        TUTOR INTEGER UNSIGNED NOT NULL,
+        FECHA_TUTOR DATE NOT NULL,
+        PRIMARY KEY(PROYECTO, TUTOR),
+        FOREIGN KEY (PROYECTO) REFERENCES PROYECTOS(ID_PROYECTO)
+                                ON DELETE CASCADE
+                                ON UPDATE CASCADE,
+        FOREIGN KEY (TUTOR) REFERENCES EMPLEADOS(ID_EMPLEADO)
+                                ON DELETE RESTRICT /*MIENTRAS UN EMPLEADO ESTÉ REFERENCIADO COMO TUTOR, NO SE PUEDE ELIMINAR*/
+                                ON UPDATE CASCADE
+        /** INDICES PARA CADA UNA DE LAS FK**/            
+      
+    
+    )ENGINE INNODB;
+    /* FIN DEFINICIÓN DE NUEVA TABLA, "ARMARIO" PARA REGISTRAR LAS OCURRENCIAS DE LA RELACIÓN**/
+    /**COPIAMOS EL TUTOR EXISTENTE PARA CADA PROYECTO EN LA NUEVA TABLA**/
+    INSERT INTO PROYECTOS_TUTORES
+    (PROYECTO, TUTOR, FECHA_TUTOR)
+    SELECT   ID_PROYECTO,TUTOR,FECHA_TUTOR
+       FROM PROYECTOS;
+    /*** SI LA RELACIÓN  PROYECTO TIENE TUTOR ,FUESE OPTATIVA
+         NECESITARIAMOS 
+         WHERE TUTOR_PROYECTO IS NOT NULL**/
+    /*** PARA ELIMINAR LA COLUMNA TUTOR_PROYECTO TENGO QUE PRIMERO LEVANTAR LA RESTRICCIÓN DE INTEGRIDAD REFERENCIAL**/
+     ALTER TABLE proyectos 
+        DROP FOREIGN KEY PROYECTOS_IBFK_2;
+     ALTER TABLE PROYECTOS   
+        DROP COLUMN TUTOR,
+        DROP COLUMN FECHA_TUTOR;
+        
+   /**EL ÍNDICE QUE EXISTÍA PARA FK_TUTOR
+      SE HA ELIMINADO AUTOMÁTICAMENTE **/   
+      
+/****************************************** FIN EJERCICIO 1  MODIFICACIÓN DEL MODELO***************/
+
+/************* EJERCICIO 2 
+   ADEMÁS SE NOMBRA UN SEGUNDO TUTOR A CADA PROYECTO
+   QUE ES EL EMPLEADO SUPERVISOR QUE ESTÁ TRABAJNDO EN  MÁS CANTIDAD DE PROYECTOS
+
+   
+   *************/
+        
+   /*** PROCESO  PARA LOCALIZAR AL SUPERVISOR CON MÁS REGISTROS
+        DE TRABAJO EN LA TABLA EMPLEADOS_PROYECTOS, EN VARIAS FASES :
+        **/
+ /*** PRIMERO TENGO QUE EXTRAER ESTA INFORMACIÓN  DE LA BASE DE DATOS
+ DISEÑAMOS ESTA CONSULTA****/
+ 
+      SELECT   EMPLEADO AS CLAVE,
+               COUNT(*)AS CANTIDAD_PROYECTOS_TRABAJA
+        FROM EMPLEADOS_PROYECTOS
+        WHERE EMPLEADO IN (  
+                            SELECT  DISTINCT SUPERVISOR
+                               FROM EMPLEADOS
+                               WHERE SUPERVISOR IS NOT NULL
+                          )
+        
+        GROUP BY EMPLEADO;
+        
+     
+        
+    /*** AHORA SOBRE ESTA TABLA____ LA QUE CONSTRUYE ESTA SELECT
+        VAMOS A HACER UNA LECTURA...
+        VAMOS A CALCULAR EL VALOR MÁXIMO DE UNA DE SUS COLUMNAS
+        -----> USAMOS CONSULTA EN TABLA DERIVADA
+        -----> DETRÁS DE CLÁUSULA FROM PONEMOS UNA SUBCONSULTA CON ALIAS
+        ***************************/
+        
+        
+        
+        SELECT   MAX( CANTIDAD_PROYECTOS_TRABAJA) INTO @DATO
+            FROM 
+            (
+              SELECT   EMPLEADO AS CLAVE,
+                      COUNT(*)AS CANTIDAD_PROYECTOS_TRABAJA
+              FROM EMPLEADOS_PROYECTOS
+              WHERE EMPLEADO IN (  
+                            SELECT  DISTINCT SUPERVISOR
+                               FROM EMPLEADOS
+                               WHERE SUPERVISOR IS NOT NULL
+                          )
+        
+              GROUP BY EMPLEADO
+            
+            
+            ) AS TABLA;
+        
+      /**** AHORA VAMOS A ENCONTRAR LA CLAVE DEL EMPLEADO SUPERVISOR
+           QUE TRABAJA EN UNA CANTIDAD DE PROYECTOS QUE ES EL MAX
+           *******************/
+            
+        SELECT   CLAVE
+          FROM 
+          (
+              SELECT   EMPLEADO AS CLAVE,
+                      COUNT(*)AS CANTIDAD_PROYECTOS_TRABAJA
+              FROM EMPLEADOS_PROYECTOS
+              WHERE EMPLEADO IN (  
+                            SELECT  DISTINCT SUPERVISOR
+                               FROM EMPLEADOS
+                               WHERE SUPERVISOR IS NOT NULL
+                          )
+        
+              GROUP BY EMPLEADO
+            
+            
+            ) AS TABLA
+           WHERE CANTIDAD_PROYECTOS_TRABAJA= @DATO;
+    
+    
+    /*** ATENCIÓN!! ESTA SELECT PUEDE DEVOLVER UNA O VARIAS CLAVES DE EMPLEADO 
+        PARA INSERTAR DEBO ASEGURARME UNA PUEDO PONER LIMIT 1;
+        ******************/
+       SELECT   CLAVE INTO @CLAVE_TUTOR
+          FROM 
+          (
+              SELECT   EMPLEADO AS CLAVE,
+                      COUNT(*)AS CANTIDAD_PROYECTOS_TRABAJA
+              FROM EMPLEADOS_PROYECTOS
+              WHERE EMPLEADO IN (  
+                            SELECT  DISTINCT SUPERVISOR
+                               FROM EMPLEADOS
+                               WHERE SUPERVISOR IS NOT NULL
+                          )
+        
+              GROUP BY EMPLEADO
+            
+            
+            ) AS TABLA
+           WHERE CANTIDAD_PROYECTOS_TRABAJA= @DATO
+           LIMIT 1;  /***IMPORTANTE**/
+                     /** SOLO EL PRIMERO SI HAY MÁS DE UN SUPERVISOR CON EL VALOR MÁXIMO**/
+           
+           
+      /*** PARA VER LAS TUPLAS QUE VOY A INSERTAR....      
+      
+        SELECT  ID_PROYECTO,@CLAVE_TUTOR,CURRENT_DATE()
+           FROM PROYECTOS;   *****/  
+    
+        
+      INSERT  INTO PROYECTOS_TUTORES
+        (PROYECTO,TUTOR,FECHA_TUTOR)
+        SELECT  ID_PROYECTO,@CLAVE_TUTOR,CURRENT_DATE()
+           FROM PROYECTOS;

@@ -1,0 +1,17 @@
+/** 1. subir el salrio en 10 % 
+   a todos los empleados
+   que sean de ventas o de adminstración**/
+   
+   
+   
+   /** 2. subir el salario en 10 % 
+   a todos los empleados
+   que ESTEN TRABAJANDO EN MÁS DE 2 PROYECTOS
+   Y NO TENGAN SUPERVISOR ASIGNADO
+   **/
+   
+   /** 3 subir el salario en 10 % 
+   a todos los empleados
+   que ESTEN TRABAJANDO EN ALGÚN PROYECTO
+   Y QUE TENGAN SUPERVISOR ASIGNADO
+   **/
