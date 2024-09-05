@@ -1,0 +1,89 @@
+Tabla alumo
+
+Foto                null 
+DNI                 not null  Pk
+Nombre              not null
+Direcion            not null
+Telefono            not null
+Nacimiento          not null 
+Email               not null unique AK
+aula                not null 
+                    FK referencia a tabla aula(id aulas)
+
+Tabla aulas
+
+nombre             not null
+id aula            not null PK
+direccion          not null
+Localiudad         not null
+
+Tabla profesor
+
+nombre             not null
+dni                not null PK
+email              not null unique AK
+nacimiento         not null 
+supervisor         null unsigned
+                   Fk referencia a tabla profesores(id profesor)
+fecha supervisor   not null
+Departamento       not null unsigned
+                   Fk referencia a tabla departamento(id departamento)
+administrador      null
+                   Fk referencia a tabla aula (id aula)
+Num horas          null
+p admin            null
+Precio hora        null
+Dia sem            null 
+
+Tabla curso
+
+id curso           not null PK
+nombre             not null
+duracion           not null 
+libro              not null
+precio             not null
+web                not null unique AK
+Evaluador          not null unsigned 
+                   FK referencia a tabla profesor (id profesor)
+Fecha              not null
+Hora               not null
+Delegado           not null unique 
+                   Fk referencia a tabla alumno (id alumno)
+
+Taba curso alumno
+
+alumno             not null  unsigned 
+                   Fk referencia a tabla alumno (id alumno)
+curso              not null  unsigned 
+                   Fk referencia atabla curso (id curso)
+fecha              not null
+nota               not null
+                 PK (alumno,curso)
+
+Tabla profesor curso
+
+profesor           not null unsigned
+                   Fk referencia a tabla profesor (id profesor)
+curso              not null unsigned 
+                   FK referncia a tabla profesor (id profesor)
+numero horas       not null
+precio hora        not null
+                 pk(profesor,curso)
+
+Tabla departamento
+
+id deartamento     not null unique PK
+nombre             not null
+email              not null
+Director           not null unique 
+                   Fk referencia a tabla profesor (id profesor)
+Fecha              not null
+prima              not null
+
+
+Tabla telefono 
+
+Aula               not null 
+                   Fk referencia a tabla aula (id aula)
+Telefono           not null
+                pk(telefono,aula)

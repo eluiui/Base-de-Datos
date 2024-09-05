@@ -1,0 +1,78 @@
+Tabla empleado 
+
+Nif                  not null PK
+nombre apellido      not null
+Nss                  not null AK
+Salario              not null
+Direccion            not null  
+Fecha naz            not null  
+Fecha alta           not null              
+Proyecto             unsigned null
+                     Fk referencia a tabla proyecto(id proyecto)
+Supervisor           unsigned null 
+                     Fk referencia a tabla empleado(id empleado)
+Fecha Supervisor     not null
+Dia semana           not null
+
+
+Tabla proyecto
+
+Id proyecto          not null PK
+Nombre               not null AK
+Fecha lazamiento     not null 
+Fecha prv fin        not null
+Departamento         not null 
+                     Fk referencia a tabla departamento (id departamento)
+
+
+Tabla departamento
+
+Id departamento      not null PK
+Nombre               not null Ak
+Director             not null 
+                     Fk referencia a tabla empleado (id empelados)
+fecha director       not null
+Prima                not null
+
+
+Tabla sede
+
+Provincia            not null PK 
+Localidad            not null
+Direccion            not null
+Superficie           not null 
+  
+
+
+Tabla familiar
+
+Dni                not null  PK
+Fecha nacim        not null
+Nombre             not null
+Empleado           not null
+                   FK referencia a tabla empleado (id empleado) 
+Parentesco         not null   
+
+Tabla Telefono
+
+Sede              not null 
+                  FK referencia a tabla sede (id sede)
+telefono          not null
+              PK(telefono,sede)
+
+
+Tabla departamento sede 
+
+Departamento      not null
+                  FK referencia a tabla departamento (id departamento)
+Sede              not null
+                  FK referencia a tabla sede (id sede)
+                PK(sede,departamento)
+
+Tabla proyecto empleado
+
+Empleado           unsigned null
+                   FK referencia a tabla empleado (id empleado)
+Proyecto           unsigned null
+                   Fk referencia a tabla proyecto(id proyecto)
+                PK(proyecto,empleado)

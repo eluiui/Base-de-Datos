@@ -1,0 +1,44 @@
+Tabla alumno
+
+DNI            unique not null PK
+aula           unsigned not null 
+               Fk referencia a tabla aula(id aula)
+
+Tabla curso
+
+Id curso       unique not null PK
+Delegado       unique not null 
+               FK referencia a tabla alumno(id alumno)
+
+Tabla aula 
+
+Id aula        unique not null Pk
+
+Tabla Profesor 
+
+Dni            unique not null PK
+aula           unsigned null 
+               Fk referencia a tabla aula (id aula)
+Supervisor     not null
+               Fk referencia a tabla profesores(dni)
+
+Tabla profesor curso
+
+Profesor       not null
+               Fk referencia a tabla de profesor(id profesor)
+Curso          unsigned not null 
+               Fk referencia a tabla de curso(id curso)
+Precio hora    not null
+Num horas      not null
+             PK(profesor,curso)
+
+Tabla alumno curso
+
+Curso          unsigned not null 
+               Fk referencia a tabla de curso(id curso) 
+alumno         unsigned not null 
+               Fk referencia a tabla de alumno(id alumno)
+Fecha mat      not null
+nota           not null
+             PK(alumno,curso)
+ 
